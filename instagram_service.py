@@ -54,6 +54,8 @@ def login(username, password):
             return False, "Incorrect password."
         if "two_factor" in msg or "2fa" in msg:
             return False, "Two-factor required — this app does not support 2FA login yet."
+        if "nonetype" in msg and "int(" in msg:
+            return False, "Instagram blocked the login or returned an unrecognized response. Please check your account in the official Instagram app."
         return False, f"Login error: {str(e)}"
 
 
