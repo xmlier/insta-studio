@@ -1,5 +1,5 @@
 Flask==3.0.3
 instagrapi==3.0.21
-requests==2.32.3
+requests
 gunicorn==22.0.0
 Pillow==10.4.0
