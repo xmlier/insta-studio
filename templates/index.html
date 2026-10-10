@@ -1,886 +1,196 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#f6f7fb">
-    <title>Instagram Studio — Auto Comment & Repost</title>
+    <title>Instagram Studio</title>
     <style>
         :root {
             --primary: #7657f6;
             --primary-hover: #6344e8;
-            --primary-soft: #f0edff;
             --bg: #f6f7fb;
             --surface: #ffffff;
-            --sidebar: #171725;
             --text: #202033;
             --muted: #85869a;
             --border: #e9eaf1;
-            --success: #15966a;
-            --danger: #dc4c64;
-            --radius: 18px;
-            --shadow: 0 8px 30px rgba(32, 32, 70, .045);
+            --radius: 12px;
         }
-
-        * {
-            box-sizing: border-box;
-        }
-
         body {
-            margin: 0;
             font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
             background: var(--bg);
             color: var(--text);
-            font-size: 14px;
-            -webkit-font-smoothing: antialiased;
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
         }
-
-        button,
-        input,
-        textarea {
-            font: inherit;
-        }
-
-        button {
-            cursor: pointer;
-        }
-
-        button:focus-visible,
-        input:focus-visible,
-        textarea:focus-visible {
-            outline: 3px solid rgba(118, 87, 246, .22);
-            outline-offset: 2px;
-        }
-
-        .app {
-            display: grid;
-            grid-template-columns: 250px minmax(0, 1fr);
-            min-height: 100vh;
-        }
-
-        /* Sidebar */
-        .sidebar {
-            background: var(--sidebar);
-            color: #fff;
-            padding: 28px 18px;
+        .container {
+            max-width: 600px;
+            width: 100%;
             display: flex;
             flex-direction: column;
-            gap: 32px;
+            gap: 24px;
         }
-
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 0 8px;
-        }
-
-        .brand-icon {
-            width: 42px;
-            height: 42px;
-            display: grid;
-            place-items: center;
-            border-radius: 14px;
-            font-size: 22px;
-            background: linear-gradient(135deg, #a18aff, #7151ed);
-            box-shadow: 0 5px 18px #7657f644;
-        }
-
-        .brand-name {
-            font-size: 17px;
-            font-weight: 750;
-            letter-spacing: -.5px;
-        }
-
-        .brand-subtitle {
-            margin-top: 4px;
-            color: #9999b0;
-            font-size: 11px;
-        }
-
-        .nav-label {
-            padding: 0 12px;
-            margin-bottom: 12px;
-            color: #85859e;
-            font-size: 10px;
-            font-weight: 750;
-            letter-spacing: 1.4px;
-            text-transform: uppercase;
-        }
-
-        .nav {
-            display: grid;
-            gap: 7px;
-        }
-
-        .nav a {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 13px 14px;
-            border-radius: 11px;
-            color: #aaaabd;
-            text-decoration: none;
-            transition: .2s;
-        }
-
-        .nav a:hover,
-        .nav a.active {
-            color: #fff;
-            background: #ffffff12;
-        }
-
-        .nav a.active {
-            box-shadow: inset 3px 0 #9c83ff;
-        }
-
-        .nav-icon {
-            width: 22px;
-            text-align: center;
-            font-size: 17px;
-        }
-
-        .sidebar-bottom {
-            margin-top: auto;
-        }
-
-        .help-card {
-            padding: 17px;
-            border: 1px solid #ffffff13;
-            border-radius: 15px;
-            background: #ffffff08;
-        }
-
-        .help-card strong {
-            display: block;
-            margin-bottom: 8px;
-            font-size: 13px;
-        }
-
-        .help-card p {
-            margin: 0;
-            color: #aaaabd;
-            font-size: 12px;
-            line-height: 1.7;
-        }
-
-        /* Main */
-        .main {
-            min-width: 0;
-            padding: 28px 36px 40px;
-        }
-
-        .topbar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 18px;
-            margin-bottom: 34px;
-        }
-
-        .breadcrumb {
-            color: var(--muted);
-            font-size: 12px;
-            margin-bottom: 7px;
-        }
-
-        .page-title {
-            margin: 0;
-            font-size: clamp(23px, 3vw, 30px);
-            letter-spacing: -1.1px;
-            font-weight: 780;
-        }
-
-        .topbar-right {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .date-label {
-            color: var(--muted);
-            font-size: 12px;
-        }
-
-        .avatar {
-            display: grid;
-            place-items: center;
-            width: 40px;
-            height: 40px;
-            border-radius: 13px;
-            background: var(--primary-soft);
-            color: var(--primary);
-            font-weight: 800;
-        }
-
-        .welcome {
-            margin-bottom: 25px;
-        }
-
-        .welcome h2 {
-            margin: 0 0 8px;
-            font-size: 18px;
-            letter-spacing: -.4px;
-        }
-
-        .welcome p {
-            margin: 0;
-            color: var(--muted);
-            line-height: 1.7;
-        }
-
-        .notice {
-            display: flex;
-            align-items: flex-start;
-            gap: 13px;
-            padding: 16px 18px;
-            margin-bottom: 26px;
-            background: #fff8e9;
-            border: 1px solid #f5e8c9;
-            border-radius: 14px;
-        }
-
-        .notice-icon {
-            font-size: 19px;
-        }
-
-        .notice strong {
-            display: block;
-            margin-bottom: 5px;
-            color: #78551a;
-            font-size: 13px;
-        }
-
-        .notice p {
-            margin: 0;
-            color: #8e754d;
-            font-size: 12px;
-            line-height: 1.65;
-        }
-
-        .section-heading {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            margin: 30px 0 16px;
-        }
-
-        .section-heading h2 {
-            margin: 0;
-            font-size: 17px;
-            letter-spacing: -.35px;
-        }
-
-        .section-heading p {
-            margin: 5px 0 0;
-            color: var(--muted);
-            font-size: 12px;
-        }
-
+        h1 { margin: 0 0 8px; font-size: 24px; font-weight: 700; }
+        p.subtitle { margin: 0 0 12px; color: var(--muted); font-size: 14px; }
         .card {
-            min-width: 0;
-            padding: 23px;
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
             background: var(--surface);
-            box-shadow: var(--shadow);
+            padding: 24px;
+            border-radius: var(--radius);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+            border: 1px solid var(--border);
         }
-
-        .card-header {
-            display: flex;
-            align-items: center;
-            gap: 13px;
-            margin-bottom: 22px;
-        }
-
-        .card-icon {
-            display: grid;
-            place-items: center;
-            flex-shrink: 0;
-            width: 45px;
-            height: 45px;
-            border-radius: 14px;
-            background: var(--primary-soft);
-            font-size: 21px;
-        }
-
-        .card-icon.green {
-            background: #e8f8f0;
-        }
-
-        .card-header h3 {
-            margin: 0 0 5px;
-            font-size: 15px;
-            font-weight: 750;
-        }
-
-        .card-header p {
-            margin: 0;
-            color: var(--muted);
-            font-size: 12px;
-            line-height: 1.5;
-        }
-
-        .field {
-            margin-bottom: 17px;
-        }
-
-        .field label {
-            display: block;
-            margin-bottom: 8px;
-            font-size: 12px;
-            font-weight: 650;
-        }
-
-        .field input,
-        .field textarea {
-            display: block;
-            width: 100%;
-            min-width: 0;
-            padding: 12px 14px;
-            color: var(--text);
-            background: #fafafe;
-            border: 1px solid #e7e8f0;
-            border-radius: 10px;
-            outline: none;
-            transition: border-color .2s, box-shadow .2s;
-            font-family: inherit;
-            resize: vertical;
-        }
-
-        .field input::placeholder,
-        .field textarea::placeholder {
-            color: #aaabbb;
-        }
-
-        .field input:focus,
-        .field textarea:focus {
-            background: #fff;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px #7657f615;
-        }
-
-        .field-hint {
-            display: block;
-            margin-top: 7px;
-            color: var(--muted);
-            font-size: 11px;
-            line-height: 1.5;
-        }
-
-        .btn {
-            display: inline-flex;
-            justify-content: center;
-            align-items: center;
-            gap: 8px;
-            width: 100%;
-            padding: 12px 15px;
-            border: 1px solid transparent;
-            border-radius: 10px;
-            font-size: 13px;
-            font-weight: 700;
-            transition: background .2s, transform .2s;
-        }
-
-        .btn:active:not(:disabled) {
-            transform: scale(.985);
-        }
-
-        .btn:disabled {
-            opacity: .6;
-            cursor: not-allowed;
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            color: #fff;
-            box-shadow: 0 4px 12px #7657f626;
-        }
-
-        .btn-primary:hover:not(:disabled) {
-            background: var(--primary-hover);
-        }
-
-        .btn-secondary {
-            color: #56566d;
-            background: #fff;
-            border-color: var(--border);
-        }
-
-        .btn-secondary:hover:not(:disabled) {
-            background: #f8f8fc;
-        }
-
-        .btn-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-
-        /* Log */
-        .log-card {
-            margin-top: 28px;
-            padding: 0;
-            overflow: hidden;
-        }
-
-        .log-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            padding: 20px 23px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .log-title {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 15px;
-            font-weight: 750;
-        }
-
-        .live-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #19b981;
-            box-shadow: 0 0 0 4px #19b98119;
-        }
-
-        .clear-btn {
-            padding: 7px 10px;
-            border: 0;
+        .card h2 { margin: 0 0 20px; font-size: 18px; font-weight: 600; }
+        .field { margin-bottom: 16px; }
+        label { display: block; margin-bottom: 8px; font-size: 13px; font-weight: 600; }
+        input, select, textarea {
+            width: 100%; padding: 12px 14px;
+            border: 1px solid var(--border);
             border-radius: 8px;
-            color: var(--muted);
-            background: transparent;
-            font-size: 12px;
+            font-family: inherit; font-size: 14px;
+            box-sizing: border-box;
+            background: #fafafa;
+            transition: 0.2s;
         }
-
-        .clear-btn:hover {
-            background: #f3f3fa;
-            color: var(--text);
+        input:focus, select:focus, textarea:focus {
+            outline: none; border-color: var(--primary);
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(118, 87, 246, 0.15);
         }
-
-        .log-body {
-            min-height: 150px;
-            max-height: 340px;
-            padding: 12px 23px;
-            overflow: auto;
+        .hint { font-size: 12px; color: var(--muted); margin-top: 6px; display: block; }
+        .btn {
+            background: var(--primary); color: white;
+            padding: 12px 16px; border: none; border-radius: 8px;
+            font-weight: 600; cursor: pointer; width: 100%;
+            font-size: 14px; transition: 0.2s;
         }
-
-        .log-empty {
-            display: grid;
-            min-height: 120px;
-            place-content: center;
-            justify-items: center;
-            gap: 8px;
-            color: var(--muted);
-            text-align: center;
+        .btn:hover { background: var(--primary-hover); transform: translateY(-1px); }
+        .btn:active { transform: translateY(0); }
+        .btn:disabled { opacity: 0.7; cursor: not-allowed; }
+        .btn-secondary { background: #f0f0f5; color: var(--text); }
+        .btn-secondary:hover { background: #e4e4eb; }
+        .btn-row { display: flex; gap: 12px; }
+        .log-container {
+            max-height: 250px; overflow-y: auto;
+            background: #fafafa; border: 1px solid var(--border);
+            border-radius: 8px; padding: 12px; font-size: 13px;
         }
-
-        .log-empty span {
-            font-size: 25px;
+        .log-entry { margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid #f0f0f0; line-height: 1.5; }
+        .log-entry:last-child { border: none; margin: 0; padding: 0; }
+        .success { color: #15966a; }
+        .error { color: #dc4c64; }
+        .info { color: #444; }
+        .progress-bar {
+            height: 8px; background: #eee; border-radius: 4px; overflow: hidden; margin: 12px 0;
         }
-
-        .log-empty p {
-            margin: 0;
-            font-size: 12px;
+        .progress-fill {
+            height: 100%; background: var(--primary); width: 0%; transition: width 0.3s;
         }
-
-        .log-entry {
-            display: grid;
-            grid-template-columns: 9px 1fr auto;
-            align-items: start;
-            gap: 11px;
-            padding: 13px 0;
-            border-bottom: 1px solid #f0f0f6;
-            line-height: 1.6;
-        }
-
-        .log-entry:last-child {
-            border-bottom: 0;
-        }
-
-        .log-indicator {
-            width: 7px;
-            height: 7px;
-            margin-top: 6px;
-            border-radius: 50%;
-            background: #a2a2b6;
-        }
-
-        .log-entry.success .log-indicator {
-            background: var(--success);
-        }
-
-        .log-entry.error .log-indicator {
-            background: var(--danger);
-        }
-
-        .log-message {
-            overflow-wrap: anywhere;
-            color: #56566d;
-            font-size: 12px;
-        }
-
-        .log-time {
-            color: #a1a1b1;
-            font-size: 11px;
-            white-space: nowrap;
-        }
-
-        .footer {
-            padding-top: 26px;
-            color: #a0a0b1;
-            text-align: center;
-            font-size: 11px;
-        }
-
-        @media (max-width: 1050px) {
-            .main {
-                padding: 25px 24px 35px;
-            }
-
-            .card {
-                padding: 19px;
-            }
-
-            .app {
-                grid-template-columns: 215px minmax(0, 1fr);
-            }
-        }
-
-        @media (max-width: 760px) {
-            .app {
-                grid-template-columns: 1fr;
-            }
-
-            .sidebar {
-                padding: 15px 18px;
-                gap: 15px;
-            }
-
-            .brand {
-                padding: 0;
-            }
-
-            .sidebar-nav {
-                overflow-x: auto;
-            }
-
-            .nav-label,
-            .sidebar-bottom {
-                display: none;
-            }
-
-            .nav {
-                display: flex;
-                gap: 7px;
-                width: max-content;
-            }
-
-            .nav a {
-                padding: 10px 12px;
-                font-size: 12px;
-            }
-
-            .nav-icon {
-                font-size: 15px;
-            }
-
-            .main {
-                padding: 24px 18px;
-            }
-
-            .topbar {
-                margin-bottom: 27px;
-            }
-
-            .date-label {
-                display: none;
-            }
-        }
-
-        @media (max-width: 380px) {
-            .main {
-                padding: 20px 12px;
-            }
-
-            .card {
-                padding: 17px;
-            }
-
-            .topbar-right {
-                gap: 7px;
-            }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-
-            *,
-            *::before,
-            *::after {
-                scroll-behavior: auto !important;
-                transition: none !important;
-            }
-        }
+        footer { text-align: center; font-size: 13px; color: var(--muted); margin-top: 10px; }
     </style>
 </head>
-
 <body>
-    <div class="app">
-        <aside class="sidebar">
-            <div class="brand">
-                <div class="brand-icon">◎</div>
-                <div>
-                    <div class="brand-name">Instagram Studio</div>
-                    <div class="brand-subtitle">Auto comment &amp; repost</div>
+    <div class="container">
+        <div>
+            <h1>Instagram Studio</h1>
+            <p class="subtitle">Auto comment & repost simplified. Note: Use a burner account.</p>
+        </div>
+
+        <div class="card" id="loginCard">
+            <h2>1. Sign In</h2>
+            <form id="loginForm">
+                <div class="field">
+                    <label>Username</label>
+                    <input type="text" name="username" placeholder="Instagram username" required>
                 </div>
+                <div class="field">
+                    <label>Password</label>
+                    <input type="password" name="password" placeholder="Password" required>
+                </div>
+                <div class="btn-row">
+                    <button class="btn" type="submit" id="loginBtn">Sign In</button>
+                    <button class="btn btn-secondary" type="button" id="logoutBtn">Sign Out</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2>2. Run Scheduled Job</h2>
+            <form id="jobForm">
+                <div class="field">
+                    <label>Targets (one per line)</label>
+                    <textarea name="targets" rows="4" required placeholder="https://www.instagram.com/p/..."></textarea>
+                    <span class="hint">Paste post URLs or @username:N</span>
+                </div>
+                <div class="field">
+                    <label>Action</label>
+                    <select name="action">
+                        <option value="both">Comment + Repost</option>
+                        <option value="comment">Comment only</option>
+                        <option value="repost">Repost only</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label>Comment text</label>
+                    <textarea name="comment_text" rows="2">Nice post! 🔥</textarea>
+                </div>
+                <div class="field">
+                    <label>Number of times to run</label>
+                    <input name="times" type="number" min="1" max="10000" value="1" required>
+                    <span class="hint">Will repeat actions with a 30s interval.</span>
+                </div>
+                <button class="btn" type="submit" id="jobStartBtn">Start Job</button>
+                <button class="btn btn-secondary" type="button" id="jobCancelBtn" style="display:none; margin-top:12px;">✕ Cancel Job</button>
+            </form>
+
+            <div id="jobStatus" style="display:none; margin-top:24px;">
+                <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:600;">
+                    <span>Progress</span>
+                    <span id="jobStatusValue">pending</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="jobProgressFill"></div>
+                </div>
+                <div style="font-size:12px; color:var(--muted); text-align:right;" id="jobProgressText">0 / 0</div>
             </div>
+        </div>
 
-            <div class="sidebar-nav">
-                <div class="nav-label">Workspace</div>
-                <nav class="nav" aria-label="Main navigation">
-                    <a class="active" href="#overview"><span class="nav-icon">▦</span> Overview</a>
-                    <a href="#account"><span class="nav-icon">♙</span> Account</a>
-                    <a href="#auto"><span class="nav-icon">✳</span> Auto action</a>
-                    <a href="#activity"><span class="nav-icon">◷</span> Activity</a>
-                </nav>
+        <div class="card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                <h2 style="margin:0;">Activity Log</h2>
+                <button class="btn-secondary" style="padding:6px 12px; border:none; border-radius:6px; font-size:12px; cursor:pointer; font-weight:600;" id="clearLogBtn">Clear</button>
             </div>
-
-            <div class="sidebar-bottom">
-                <div class="help-card">
-                    <strong>✦ One-click flow</strong>
-                    <p>Log in, paste a post URL, and the app comments and reposts in one go with human-style delays.</p>
-                </div>
+            <div class="log-container" id="log">
+                <div style="color:var(--muted); text-align:center; padding:20px 0;" id="logEmpty">No activity yet. Your results will appear here.</div>
             </div>
-        </aside>
+        </div>
 
-        <main class="main" id="overview">
-            <header class="topbar">
-                <div>
-                    <div class="breadcrumb">Workspace / Dashboard</div>
-                    <h1 class="page-title">Auto Comment &amp; Repost</h1>
-                </div>
-                <div class="topbar-right">
-                    <span class="date-label" id="currentDate"></span>
-                    <div class="avatar" aria-label="Workspace profile">IS</div>
-                </div>
-            </header>
-
-            <section class="welcome">
-                <h2>One post. One click. 🚀</h2>
-                <p>Paste a post URL or media ID and let the app handle the rest.</p>
-            </section>
-
-            <section class="notice" aria-label="Account safety notice">
-                <div class="notice-icon">⚠️</div>
-                <div>
-                    <strong>Use a burner account only</strong>
-                    <p>This app uses Instagram's private API via instagrapi and violates Instagram's Terms of Service.
-                        Accounts may be restricted or banned. Never use this on your main account.</p>
-                </div>
-            </section>
-
-            <section id="account">
-                <div class="section-heading">
-                    <div>
-                        <h2>1. Account</h2>
-                        <p>Log in once. Your session is saved on the server.</p>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-icon">🔐</div>
-                        <div>
-                            <h3>Sign in</h3>
-                            <p>Credentials are sent only to your own backend.</p>
-                        </div>
-                    </div>
-
-                    <form id="loginForm">
-                        <div class="field">
-                            <label for="username">Username</label>
-                            <input type="text" id="username" name="username" placeholder="Instagram username"
-                                autocomplete="username" required>
-                        </div>
-                        <div class="field">
-                            <label for="password">Password</label>
-                            <input type="password" id="password" name="password" placeholder="Password"
-                                autocomplete="current-password" required>
-                            <span class="field-hint">Use a burner account. Do not use your main.</span>
-                        </div>
-                        <div class="btn-row">
-                            <button class="btn btn-primary" id="loginBtn" type="submit">↗ Sign in</button>
-                            <button class="btn btn-secondary" id="logoutBtn" type="button">Sign out</button>
-                        </div>
-                    </form>
-                </div>
-            </section>
-
-            <section id="auto">
-                <div class="section-heading">
-                    <div>
-                        <h2>2. Scheduled action</h2>
-                        <p>Comment, repost, or both — spread over hours at human-like intervals.</p>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-icon green">✳</div>
-                        <div>
-                            <h3>Batch job</h3>
-                            <p>Paste one target per line. Runs in the background for hours.</p>
-                        </div>
-                    </div>
-
-                    <form id="jobForm">
-                        <div class="field">
-                            <label for="targets">Targets (one per line)</label>
-                            <textarea id="targets" name="targets" rows="6" required placeholder="https://www.instagram.com/p/DeM5L4Nhyxk/
-https://www.instagram.com/p/CxYz123AbC/
-@someusername:5"></textarea>
-                            <span class="field-hint">
-                                Each line is a post URL, shortcode, numeric ID, or
-                                <code>@username:N</code> to fetch that user's N most recent posts (max 20).
-                                Duplicates are ignored.
-                            </span>
-                        </div>
-
-                        <div class="field">
-                            <label for="action">Action</label>
-                            <select id="action" name="action"
-                                style="display:block;width:100%;padding:12px 14px;background:#fafafe;border:1px solid #e7e8f0;border-radius:10px;">
-                                <option value="both">Comment + Repost</option>
-                                <option value="comment">Comment only</option>
-                                <option value="repost">Repost only</option>
-                            </select>
-                        </div>
-
-                        <div class="field">
-                            <label for="commentText">Comment text</label>
-                            <textarea id="commentText" name="comment_text" rows="2" maxlength="2200"
-                                placeholder="Nice post! 🔥">Nice post! 🔥</textarea>
-                        </div>
-
-                        <div class="field">
-                            <label for="times">Number of times to run</label>
-                            <input id="times" name="times" type="number" min="1" max="10000" value="1"
-                                required>
-                            <span class="field-hint">
-                                How many times to repeat the action(s). Each action will have a 30-second interval.
-                            </span>
-                        </div>
-
-                        <button class="btn btn-primary" type="submit" id="jobStartBtn">
-                            ✳ Start scheduled job
-                        </button>
-                        <button class="btn btn-secondary" type="button" id="jobCancelBtn"
-                            style="display:none; margin-top:10px;">
-                            ✕ Cancel job
-                        </button>
-                    </form>
-
-                    <div id="jobStatus" style="display:none; margin-top:22px;">
-                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
-                            <span style="font-size:12px; font-weight:650;">Progress</span>
-                            <span style="font-size:12px; color:#85869a;" id="jobStatusValue">pending</span>
-                        </div>
-                        <div style="height:8px; background:#eeeef5; border-radius:6px; overflow:hidden;">
-                            <div id="jobProgressFill"
-                                style="height:100%; width:0%; background:linear-gradient(90deg,#a18aff,#7151ed); transition:width .4s;">
-                            </div>
-                        </div>
-                        <div style="font-size:11px; color:#85869a; margin-top:8px;" id="jobProgressText">
-                            0 / 0
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <section id="activity">
-                <div class="section-heading">
-                    <div>
-                        <h2>Activity</h2>
-                        <p>Live results for every action you run.</p>
-                    </div>
-                </div>
-
-                <div class="card log-card">
-                    <div class="log-header">
-                        <div class="log-title">
-                            <span class="live-dot"></span>
-                            Activity log
-                        </div>
-                        <button class="clear-btn" id="clearLogBtn" type="button">Clear history</button>
-                    </div>
-                    <div class="log-body" id="log" role="log" aria-live="polite" aria-relevant="additions">
-                        <div class="log-empty" id="logEmpty">
-                            <span>◷</span>
-                            <p>No activity yet. Your results will appear here.</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <footer class="footer">
-                Instagram Studio · developed by xmlier
-            </footer>
-        </main>
+        <footer>developed by xmlier</footer>
     </div>
 
     <script>
         const logDiv = document.getElementById("log");
-        const MAX_LOG_ENTRIES = 200;
-
         let pollTimer = null;
         let activeJobId = null;
         let lastLoggedIndex = 0;
 
-        document.getElementById("currentDate").textContent =
-            new Intl.DateTimeFormat(undefined, {
-                weekday: "short", month: "short", day: "numeric", year: "numeric"
-            }).format(new Date());
-
         function log(message, type = "info") {
             const empty = document.getElementById("logEmpty");
             if (empty) empty.remove();
-
+            
             const entry = document.createElement("div");
-            entry.className = `log-entry ${["success", "error"].includes(type) ? type : "info"}`;
-
-            const indicator = document.createElement("span");
-            indicator.className = "log-indicator";
-
-            const text = document.createElement("div");
-            text.className = "log-message";
-            text.textContent = String(message ?? "No message returned.");
-
-            const time = document.createElement("time");
-            time.className = "log-time";
-            time.dateTime = new Date().toISOString();
-            time.textContent = new Date().toLocaleTimeString();
-
-            entry.append(indicator, text, time);
+            entry.className = `log-entry ${type}`;
+            const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'});
+            entry.innerHTML = `<span style="color:#999; margin-right:8px; font-size:11px;">[${time}]</span> ${message}`;
+            
             logDiv.appendChild(entry);
-
-            while (logDiv.querySelectorAll(".log-entry").length > MAX_LOG_ENTRIES) {
-                logDiv.querySelector(".log-entry")?.remove();
-            }
             logDiv.scrollTop = logDiv.scrollHeight;
         }
 
         async function postJson(url, data) {
             const r = await fetch(url, {
                 method: "POST",
-                headers: { "Content-Type": "application/json", "Accept": "application/json" },
-                credentials: "same-origin",
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(data)
             });
             const j = await r.json().catch(() => null);
@@ -888,44 +198,34 @@ https://www.instagram.com/p/CxYz123AbC/
             return j;
         }
         async function getJson(url) {
-            const r = await fetch(url, { credentials: "same-origin" });
+            const r = await fetch(url);
             return await r.json().catch(() => null);
         }
 
-        // Login
         document.getElementById("loginForm").addEventListener("submit", async (e) => {
             e.preventDefault();
-            const form = e.currentTarget;
-            const btn = form.querySelector('button[type="submit"]');
-            const orig = btn.textContent;
-            btn.disabled = true; btn.textContent = "Signing in...";
-            const fd = new FormData(form);
+            const btn = document.getElementById("loginBtn");
+            const fd = new FormData(e.target);
+            btn.disabled = true; btn.textContent = "Signing In...";
             try {
-                const r = await postJson("/api/login", {
-                    username: fd.get("username"), password: fd.get("password")
-                });
+                const r = await postJson("/api/login", Object.fromEntries(fd));
                 log(r.message, r.success ? "success" : "error");
             } catch (err) {
                 log(`Login error: ${err.message}`, "error");
             } finally {
-                btn.disabled = false; btn.textContent = orig;
+                btn.disabled = false; btn.textContent = "Sign In";
             }
         });
 
-        // Logout
-        document.getElementById("logoutBtn").addEventListener("click", async (e) => {
-            e.currentTarget.disabled = true;
+        document.getElementById("logoutBtn").addEventListener("click", async () => {
             try {
                 const r = await postJson("/api/logout", {});
                 log(r.message, r.success ? "success" : "error");
             } catch (err) {
                 log(`Logout error: ${err.message}`, "error");
-            } finally {
-                e.currentTarget.disabled = false;
             }
         });
 
-        // Job UI
         const jobStatusBox = document.getElementById("jobStatus");
         const jobStatusValue = document.getElementById("jobStatusValue");
         const jobProgressFill = document.getElementById("jobProgressFill");
@@ -935,56 +235,44 @@ https://www.instagram.com/p/CxYz123AbC/
 
         function renderJob(job) {
             jobStatusBox.style.display = "block";
-            jobStatusValue.textContent =
-                `${job.status} · ✓${job.success_count} ✕${job.fail_count}`;
+            jobStatusValue.textContent = `${job.status} (✓${job.success_count} ✕${job.fail_count})`;
             const total = job.count || 1;
             const pct = Math.min(100, Math.round((job.progress / total) * 100));
             jobProgressFill.style.width = pct + "%";
-            jobProgressText.textContent =
-                `${job.progress} / ${total} (${pct}%) — ${job.last_message || ""}`;
+            jobProgressText.textContent = `${job.progress} / ${total} (${pct}%)`;
 
             const running = job.status === "running" || job.status === "pending";
             jobStartBtn.disabled = running;
-            jobStartBtn.textContent = running ? "Job running..." : "✳ Start scheduled job";
-            jobCancelBtn.style.display = running ? "inline-flex" : "none";
+            jobStartBtn.textContent = running ? "Job Running..." : "Start Job";
+            jobCancelBtn.style.display = running ? "block" : "none";
 
             if (!running) {
-                stopPolling();
+                if (pollTimer) clearInterval(pollTimer);
+                pollTimer = null;
                 activeJobId = null;
             }
-        }
-
-        function stopPolling() {
-            if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
         }
 
         async function pollJob() {
             if (!activeJobId) return;
             const r = await getJson(`/api/job/${activeJobId}`);
             if (!r || !r.success) return;
-            const job = r.job;
-            const entries = job.log || [];
+            
+            const entries = r.job.log || [];
             for (let i = lastLoggedIndex; i < entries.length; i++) {
-                const e = entries[i];
-                log(e.message, e.level === "success" ? "success"
-                    : e.level === "error" ? "error" : "info");
+                log(entries[i].message, entries[i].level);
             }
             lastLoggedIndex = entries.length;
-            renderJob(job);
+            renderJob(r.job);
         }
 
-        // Start job
         document.getElementById("jobForm").addEventListener("submit", async (e) => {
             e.preventDefault();
-            const form = e.currentTarget;
-            const fd = new FormData(form);
+            const fd = new FormData(e.target);
             const payload = {
-                targets: fd.get("targets"),
-                action: fd.get("action"),
-                comment_text: fd.get("comment_text"),
-                times: parseInt(fd.get("times"), 10) || 1
+                targets: fd.get("targets"), action: fd.get("action"),
+                comment_text: fd.get("comment_text"), times: parseInt(fd.get("times")) || 1
             };
-
             log("Submitting job...", "info");
             lastLoggedIndex = 0;
             try {
@@ -992,18 +280,14 @@ https://www.instagram.com/p/CxYz123AbC/
                 if (!r.success) { log(r.message, "error"); return; }
                 log(r.message, "success");
                 activeJobId = r.job_id;
-                renderJob({
-                    status: "pending", count: 1, progress: 0,
-                    success_count: 0, fail_count: 0, last_message: "queued"
-                });
-                stopPolling();
+                renderJob({status: "pending", count: 1, progress: 0, success_count: 0, fail_count: 0});
+                if (pollTimer) clearInterval(pollTimer);
                 pollTimer = setInterval(pollJob, 3000);
             } catch (err) {
                 log(`Error: ${err.message}`, "error");
             }
         });
 
-        // Cancel
         jobCancelBtn.addEventListener("click", async () => {
             if (!activeJobId) return;
             try {
@@ -1014,20 +298,9 @@ https://www.instagram.com/p/CxYz123AbC/
             }
         });
 
-        // Clear log
         document.getElementById("clearLogBtn").addEventListener("click", () => {
-            logDiv.replaceChildren();
-            const empty = document.createElement("div");
-            empty.className = "log-empty";
-            empty.id = "logEmpty";
-            const icon = document.createElement("span");
-            icon.textContent = "◷";
-            const msg = document.createElement("p");
-            msg.textContent = "No activity yet. Your results will appear here.";
-            empty.append(icon, msg);
-            logDiv.appendChild(empty);
+            logDiv.innerHTML = '<div style="color:var(--muted); text-align:center; padding:20px 0;" id="logEmpty">No activity yet. Your results will appear here.</div>';
         });
     </script>
 </body>
-
 </html>
