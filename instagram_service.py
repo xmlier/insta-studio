@@ -290,8 +290,9 @@ def _run_job(job_id):
                     if not c_ok: ok = False
 
                     if action == "both":
-                        _log(job_id, "Waiting 30 seconds before reposting...")
-                        if not _interruptible_sleep(job_id, 30):
+                        delay = random.uniform(300, 600)  # 5 to 10 minutes
+                        _log(job_id, f"Waiting {int(delay/60)}m {int(delay%60)}s before reposting...")
+                        if not _interruptible_sleep(job_id, delay):
                             return
 
                 if action in ("repost", "both"):
@@ -309,10 +310,11 @@ def _run_job(job_id):
                     _jobs[job_id]["success_count"] = success
                     _jobs[job_id]["fail_count"] = failed
 
-                # Wait 30 seconds before next action unless we are completely finished
+                # Wait between 5 to 10 minutes before next action unless we are completely finished
                 if not (iteration == times - 1 and i == len(targets) - 1):
-                    _log(job_id, "Waiting 30 seconds before next action...")
-                    if not _interruptible_sleep(job_id, 30):
+                    delay = random.uniform(300, 600)
+                    _log(job_id, f"Waiting {int(delay/60)}m {int(delay%60)}s before next action...")
+                    if not _interruptible_sleep(job_id, delay):
                         return
 
         with _job_lock:
